@@ -10,7 +10,7 @@
         android:id="@+id/main_text_view_response"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
+        android:text="text_view"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
