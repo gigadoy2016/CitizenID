@@ -22,14 +22,90 @@
         android:id="@+id/button_1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
+        android:onClick="btn1Click"
         android:text="@string/button"
         android:visibility="visible"
-        android:onClick="btn1Click"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.05"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/main_text_view_response"
+        app:layout_constraintTop_toBottomOf="@+id/main_spinner_reader"
         tools:visibility="visible" />
+
+    <Button
+        android:id="@+id/main_button_list"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="196dp"
+        android:text="List"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/button_1"
+        app:layout_constraintTop_toBottomOf="@+id/main_spinner_reader" />
+
+    <Button
+        android:id="@+id/main_button_get_state"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="196dp"
+        android:text="Get State"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/main_spinner_slot"
+        app:layout_constraintTop_toBottomOf="@+id/main_button_list" />
+
+    <Button
+        android:id="@+id/main_button_open"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="96dp"
+        android:text="Open"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.45"
+        app:layout_constraintStart_toEndOf="@+id/main_button_list"
+        app:layout_constraintTop_toBottomOf="@+id/main_spinner_reader" />
+
+    <Button
+        android:id="@+id/main_button_power"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="96dp"
+        android:text="Power"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/main_button_get_state"
+        app:layout_constraintTop_toBottomOf="@+id/main_button_open" />
+
+    <Button
+        android:id="@+id/main_button_close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Close"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.862"
+        app:layout_constraintStart_toEndOf="@+id/main_button_list"
+        app:layout_constraintTop_toBottomOf="@+id/main_spinner_reader" />
+
+    <Spinner
+        android:id="@+id/main_spinner_reader"
+        android:layout_width="409dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="56dp"
+        android:minHeight="48dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="SpeakableTextPresentCheck" />
+
+    <Spinner
+        android:id="@+id/main_spinner_slot"
+        android:layout_width="104dp"
+        android:layout_height="25dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:minHeight="48dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_1"
+        tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
