@@ -128,14 +128,14 @@ public class MainActivity extends AppCompatActivity {
                         // Disable buttons
                         mCloseButton.setEnabled(false);
                         mSlotSpinner.setEnabled(false);
-//                        mGetStateButton.setEnabled(false);
-//                        mPowerSpinner.setEnabled(false);
-//                        mPowerButton.setEnabled(false);
+                        mGetStateButton.setEnabled(false);
+                        mPowerSpinner.setEnabled(false);
+                        mPowerButton.setEnabled(false);
 //                        mGetAtrButton.setEnabled(false);
 //                        mT0CheckBox.setEnabled(false);
 //                        mT1CheckBox.setEnabled(false);
-//                        mSetProtocolButton.setEnabled(false);
-//                        mGetProtocolButton.setEnabled(false);
+                        mSetProtocolButton.setEnabled(false);
+                        mGetProtocolButton.setEnabled(false);
 //                        mTransmitButton.setEnabled(false);
 //                        mControlButton.setEnabled(false);
 //                        mGetFeaturesButton.setEnabled(false);
@@ -185,14 +185,14 @@ public class MainActivity extends AppCompatActivity {
                 // Enable buttons
                 mCloseButton.setEnabled(true);
                 mSlotSpinner.setEnabled(true);
-//                mGetStateButton.setEnabled(true);
-//                mPowerSpinner.setEnabled(true);
-//                mPowerButton.setEnabled(true);
+                mGetStateButton.setEnabled(true);
+                mPowerSpinner.setEnabled(true);
+                mPowerButton.setEnabled(true);
 //                mGetAtrButton.setEnabled(true);
 //                mT0CheckBox.setEnabled(true);
 //                mT1CheckBox.setEnabled(true);
-//                mSetProtocolButton.setEnabled(true);
-//                mGetProtocolButton.setEnabled(true);
+                mSetProtocolButton.setEnabled(true);
+                mGetProtocolButton.setEnabled(true);
 //                mTransmitButton.setEnabled(true);
 //                mControlButton.setEnabled(true);
 //                mGetFeaturesButton.setEnabled(true);
@@ -210,6 +210,88 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void result) {
             mOpenButton.setEnabled(true);
+        }
+    }
+
+    private class PowerParams {
+        public int slotNum;
+        public int action;
+    }
+
+    private class PowerResult {
+        public byte[] atr;
+        public Exception e;
+    }
+
+    private class PowerTask extends AsyncTask<PowerParams, Void, PowerResult> {
+        @Override
+        protected PowerResult doInBackground(PowerParams... params) {
+            PowerResult result = new PowerResult();
+            try {
+                result.atr = mReader.power(params[0].slotNum, params[0].action);
+            } catch (Exception e) {
+                result.e = e;
+            }
+            return result;
+        }
+        @Override
+        protected void onPostExecute(PowerResult result) {
+            if (result.e != null) {
+                logMsg(result.e.toString());
+            } else {
+                // Show ATR
+                if (result.atr != null) {
+                    logMsg("ATR:");
+                    logBuffer(result.atr, result.atr.length);
+                } else {
+                    logMsg("ATR: None");
+                }
+            }
+        }
+
+    }
+    private class SetProtocolParams {
+        public int slotNum;
+        public int preferredProtocols;
+    }
+
+    private class SetProtocolResult {
+        public int activeProtocol;
+        public Exception e;
+    }
+    private class SetProtocolTask extends AsyncTask<SetProtocolParams, Void, SetProtocolResult> {
+        @Override
+        protected SetProtocolResult doInBackground(SetProtocolParams... params) {
+            SetProtocolResult result = new SetProtocolResult();
+            try {
+                result.activeProtocol = mReader.setProtocol(params[0].slotNum,
+                        params[0].preferredProtocols);
+            } catch (Exception e) {
+                result.e = e;
+            }
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(SetProtocolResult result) {
+            if (result.e != null) {
+                logMsg(result.e.toString());
+            } else {
+                String activeProtocolString = "Active Protocol: ";
+                switch (result.activeProtocol) {
+                    case Reader.PROTOCOL_T0:
+                        activeProtocolString += "T=0";
+                        break;
+                    case Reader.PROTOCOL_T1:
+                        activeProtocolString += "T=1";
+                        break;
+                    default:
+                        activeProtocolString += "Unknown";
+                        break;
+                }
+                // Show active protocol
+                logMsg(activeProtocolString);
+            }
         }
     }
 
@@ -274,6 +356,13 @@ public class MainActivity extends AppCompatActivity {
         mSlotSpinner = (Spinner) findViewById(R.id.main_spinner_slot);
         mSlotSpinner.setAdapter(mSlotAdapter);
 
+        // Initialize power spinner
+        ArrayAdapter<String> powerAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item, powerActionStrings);
+        mPowerSpinner = (Spinner) findViewById(R.id.main_spinner_power);
+        mPowerSpinner.setAdapter(powerAdapter);
+        mPowerSpinner.setSelection(Reader.CARD_WARM_RESET);
+
         //====================================================================
         mPowerButton = findViewById(R.id.button_1);
         // Initialize list button
@@ -331,14 +420,14 @@ public class MainActivity extends AppCompatActivity {
                 // Disable buttons
                 mCloseButton.setEnabled(false);
                 mSlotSpinner.setEnabled(false);
-//                mGetStateButton.setEnabled(false);
-//                mPowerSpinner.setEnabled(false);
-//                mPowerButton.setEnabled(false);
+                mGetStateButton.setEnabled(false);
+                mPowerSpinner.setEnabled(false);
+                mPowerButton.setEnabled(false);
 //                mGetAtrButton.setEnabled(false);
 //                mT0CheckBox.setEnabled(false);
 //                mT1CheckBox.setEnabled(false);
-//                mSetProtocolButton.setEnabled(false);
-//                mGetProtocolButton.setEnabled(false);
+                mSetProtocolButton.setEnabled(false);
+                mGetProtocolButton.setEnabled(false);
 //                mTransmitButton.setEnabled(false);
 //                mControlButton.setEnabled(false);
 //                mGetFeaturesButton.setEnabled(false);
@@ -379,6 +468,134 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        // Initialize power button
+        mPowerButton = (Button) findViewById(R.id.main_button_power);
+        mPowerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Get slot number
+                int slotNum = mSlotSpinner.getSelectedItemPosition();
+                // Get action number
+                int actionNum = mPowerSpinner.getSelectedItemPosition();
+                // If slot and action are selected
+                if (slotNum != Spinner.INVALID_POSITION
+                        && actionNum != Spinner.INVALID_POSITION) {
+                    if (actionNum < Reader.CARD_POWER_DOWN
+                            || actionNum > Reader.CARD_WARM_RESET) {
+                        actionNum = Reader.CARD_WARM_RESET;
+                    }
+                    // Set parameters
+                    PowerParams params = new PowerParams();
+                    params.slotNum = slotNum;
+                    params.action = actionNum;
+                    // Perform power action
+                    logMsg("Slot " + slotNum + ": "  + powerActionStrings[actionNum] + "...");
+                    new PowerTask().execute(params);
+                }
+            }
+        });
+
+        mPowerButton = (Button) findViewById(R.id.main_button_set_protocol);
+        mPowerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Get slot number
+                int slotNum = mSlotSpinner.getSelectedItemPosition();
+                // Get action number
+                int actionNum = mPowerSpinner.getSelectedItemPosition();
+                // If slot and action are selected
+                if (slotNum != Spinner.INVALID_POSITION
+                        && actionNum != Spinner.INVALID_POSITION) {
+                    if (actionNum < Reader.CARD_POWER_DOWN
+                            || actionNum > Reader.CARD_WARM_RESET) {
+                        actionNum = Reader.CARD_WARM_RESET;
+                    }
+                    // Set parameters
+                    PowerParams params = new PowerParams();
+                    params.slotNum = slotNum;
+                    params.action = actionNum;
+
+                    // Perform power action
+                    logMsg("Slot " + slotNum + ": "
+                            + powerActionStrings[actionNum] + "...");
+                    new PowerTask().execute(params);
+                }
+            }
+        });
+
+        // Initialize set protocol button
+        mSetProtocolButton = (Button) findViewById(R.id.main_button_set_protocol);
+        mSetProtocolButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Get slot number
+                int slotNum = mSlotSpinner.getSelectedItemPosition();
+
+
+                // If slot is selected
+                if (slotNum != Spinner.INVALID_POSITION) {
+                    int preferredProtocols = Reader.PROTOCOL_UNDEFINED;
+                    String preferredProtocolsString = "";
+//                    if (mT0CheckBox.isChecked()) {
+//                        preferredProtocols |= Reader.PROTOCOL_T0;
+                        preferredProtocolsString = "T=0";
+//                    }
+//                    if (mT1CheckBox.isChecked()) {
+//                        preferredProtocols |= Reader.PROTOCOL_T1;
+//                        if (preferredProtocolsString != "") {
+                            preferredProtocolsString += "/";
+//                        }
+                        preferredProtocolsString += "T=1";
+//                    }
+//                    if (preferredProtocolsString == "") {
+//                        preferredProtocolsString = "None";
+//                    }
+                    // Set Parameters
+                    SetProtocolParams params = new SetProtocolParams();
+                    params.slotNum = slotNum;
+                    params.preferredProtocols = preferredProtocols;
+                    // Set protocol
+                    logMsg("Slot " + slotNum + ": Setting protocol to "
+                            + preferredProtocolsString + "...");
+                    new SetProtocolTask().execute(params);
+                }
+            }
+        });
+
+        // Initialize get active protocol button
+        mGetProtocolButton = (Button) findViewById(R.id.main_button_get_protocol);
+        mGetProtocolButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Get slot number
+                int slotNum = mSlotSpinner.getSelectedItemPosition();
+                // If slot is selected
+                if (slotNum != Spinner.INVALID_POSITION) {
+                    try {
+                        // Get active protocol
+                        logMsg("Slot " + slotNum + ": Getting active protocol...");
+                        int activeProtocol = mReader.getProtocol(slotNum);
+                        // Show active protocol
+                        String activeProtocolString = "Active Protocol: ";
+                        switch (activeProtocol) {
+                            case Reader.PROTOCOL_T0:
+                                activeProtocolString += "T=0";
+                                break;
+                            case Reader.PROTOCOL_T1:
+                                activeProtocolString += "T=1";
+                                break;
+                            default:
+                                activeProtocolString += "Unknown";
+                                break;
+                        }
+                        logMsg(activeProtocolString);
+                    } catch (IllegalArgumentException e) {
+                        logMsg(e.toString());
+                    }
+                }
+            }
+        });
     }
 
 
@@ -408,5 +625,32 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Logs the contents of buffer.
+     *
+     * @param buffer
+     *            the buffer.
+     * @param bufferLength
+     *            the buffer length.
+     */
+    private void logBuffer(byte[] buffer, int bufferLength) {
+        String bufferString = "";
+        for (int i = 0; i < bufferLength; i++) {
+            String hexChar = Integer.toHexString(buffer[i] & 0xFF);
+            if (hexChar.length() == 1) {
+                hexChar = "0" + hexChar;
+            }
+            if (i % 16 == 0) {
+                if (bufferString != "") {
+                    logMsg(bufferString);
+                    bufferString = "";
+                }
+            }
+            bufferString += hexChar.toUpperCase() + " ";
+        }
+        if (bufferString != "") {
+            logMsg(bufferString);
+        }
+    }
 
 }

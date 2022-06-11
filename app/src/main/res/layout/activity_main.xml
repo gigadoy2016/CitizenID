@@ -65,16 +65,36 @@
         app:layout_constraintTop_toBottomOf="@+id/main_spinner_reader" />
 
     <Button
+        android:id="@+id/main_button_set_protocol"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="300dp"
+        android:text="SetPro"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/main_button_power" />
+
+    <Button
+        android:id="@+id/main_button_get_protocol"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="200dp"
+        android:text="GetPro"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/main_button_power" />
+
+    <Button
         android:id="@+id/main_button_power"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="96dp"
         android:text="Power"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/main_button_get_state"
-        app:layout_constraintTop_toBottomOf="@+id/main_button_open" />
+        app:layout_constraintStart_toEndOf="@+id/main_spinner_power"
+        app:layout_constraintTop_toBottomOf="@+id/main_button_get_state" />
 
     <Button
         android:id="@+id/main_button_close"
@@ -102,6 +122,17 @@
         android:layout_height="25dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
+        android:minHeight="48dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_1"
+        tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+    <Spinner
+        android:id="@+id/main_spinner_power"
+        android:layout_width="104dp"
+        android:layout_height="25dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="64dp"
         android:minHeight="48dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button_1"
